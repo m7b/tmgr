@@ -1,0 +1,65 @@
+\documentclass[10pt,twoside]{article}
+
+\usepackage[margin=1in]{geometry}
+\geometry{a4paper, top=25mm, left=17mm, right=8mm, bottom=30mm, headsep=10mm, footskip=12mm}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{fancyhdr}
+
+%Show frame
+%\usepackage{showframe}
+
+%Show underfull hbox / vbox
+\showboxbreadth=50 
+\showboxdepth=50
+
+%Show overfull hbox
+\overfullrule=5mm
+
+\usepackage{multicol}
+\setlength\columnsep{6.0pt} % 10pt is the default columnsep for all pages
+\setlength\tabcolsep{3.65pt}  % default value: 6pt
+
+\usepackage{supertabular}
+\usepackage{graphicx}
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering}p{#1}}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\usepackage{colortbl}
+\definecolor{blaua}{cmyk}{0.00,0.00,0.00,0.75}
+\definecolor{blaub}{cmyk}{0.35,0.20,0.00,0.45}
+\definecolor{blauc}{cmyk}{0.35,0.20,0.00,0.34}
+\definecolor{blaud}{cmyk}{0.35,0.10,0.00,0.01}
+\definecolor{blaue}{cmyk}{0.15,0.05,0.00,0.05}
+
+\maxdeadcycles=1000
+
+\pagestyle{fancy}
+
+%Make supertabular breaking between page columns
+\makeatletter
+\let\mcnewpage=\newpage
+\newcommand{\TrickSupertabularIntoMulticols}{%
+  \renewcommand\newpage{%
+    \if@firstcolumn
+      \hrule width\linewidth height0pt
+      \columnbreak
+    \else
+      \mcnewpage
+    \fi
+  }%
+}
+\makeatother
+
+
+\begin{document}
+\section{Gebietszuteilungen Stand \today}
+\begin{multicols*}{5}
+\begin{footnotesize}
+\input{data}
+\end{footnotesize}
+\end{multicols*}
+\end{document}

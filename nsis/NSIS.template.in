@@ -1,0 +1,257 @@
+; example1.nsi
+;
+; This script is perhaps one of the simplest NSIs you can make. All of the
+; optional settings are left to their default settings. The installer simply
+; prompts the user asking them where to install, and drops a copy of example1.nsi
+; there.
+
+;--------------------------------
+; You must define these values
+
+  !define VERSION "@CPACK_PACKAGE_VERSION@"
+  !define PATCH  "@CPACK_PACKAGE_VERSION_PATCH@"
+  !define INST_DIR "@CPACK_TEMPORARY_DIRECTORY@"
+
+  !define APP_VERSION "@APP_VERSION@"
+  !define APP_NAME "@APP_NAME@"
+  !define EXE_NAME "@EXE_NAME@"
+  !define README_FILE "README"
+
+
+;--------------------------------
+;Include Modern UI
+
+  !include "MUI2.nsh"
+
+
+;--------------------------------
+;General
+
+  ;The name of the installer
+;  Name "TerritoryMgr"
+;  OutFile "Install_TerritoryMgr.exe"
+  
+  ;Name and file
+  Name "@CPACK_NSIS_PACKAGE_NAME@"
+  OutFile "@CPACK_TOPLEVEL_DIRECTORY@/@CPACK_OUTPUT_FILE_NAME@"
+
+  ;The default installation directory
+  InstallDir $DESKTOP\TerritoryMgr
+
+  ;Request application privileges for Windows Vista
+  RequestExecutionLevel user
+
+
+;!define LICENSE_FILE "@PROJECT_SOURCE_DIR@resourcestextLICENSE"
+;!define MUI_ICON "@PROJECT_SOURCE_DIR@resourcesgraphics@APP_LOW_NAME@.ico"
+;!define MUI_UNICON "@PROJECT_SOURCE_DIR@resourcesgraphics@APP_LOW_NAME@.ico"
+;!define MUI_WELCOMEFINISHPAGE_BITMAP "@PROJECT_SOURCE_DIR@resourcesgraphics@APP_LOW_NAME@-banner.bmp"
+;!define MUI_UNWELCOMEFINISHPAGE_BITMAP "@PROJECT_SOURCE_DIR@resourcesgraphics@APP_LOW_NAME@-banner.bmp"
+
+
+;--------------------------------
+;Some Paths
+!define CMAKE_CURRENT_BINARY_DIR "@CPACK_CMAKE_CURRENT_BINARY_DIR@"
+!define PROJECT_SOURCE_DIR "@CPACK_PROJECT_SOURCE_DIR@"
+!define PROJECT_BINARY_DIR "@CPACK_PROJECT_BINARY_DIR@"
+
+
+;--------------------------------
+;Interface Settings
+
+  !define MUI_ABORTWARNING
+
+
+
+;--------------------------------
+; Pages
+
+  ;Page directory
+  ;Page instfiles
+
+  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+
+
+
+;--------------------------------
+;Languages
+
+  !insertmacro MUI_LANGUAGE "German"
+
+
+
+;--------------------------------
+;Installer Sections
+
+Section "Hauptprogramm" SEC01
+
+  InitPluginsDir
+
+  ; Set output path to the installation directory.
+  SetOutPath $INSTDIR
+
+  ; Put file there
+  File ${PROJECT_BINARY_DIR}\tmgr.exe
+
+
+  SetOutPath $INSTDIR\maperitive\border
+  File ${PROJECT_SOURCE_DIR}\maperitive\border\*.*
+  SetOutPath $INSTDIR\maperitive\mrules
+  File ${PROJECT_SOURCE_DIR}\maperitive\mrules\*.*
+  SetOutPath $INSTDIR\maperitive\templates
+  File ${PROJECT_SOURCE_DIR}\maperitive\templates\*.*
+  SetOutPath $INSTDIR\maperitive\regions
+  File /r ${PROJECT_SOURCE_DIR}\maperitive\regions\*.bat
+  File /r ${PROJECT_SOURCE_DIR}\maperitive\regions\*.mscript
+  File /r ${PROJECT_SOURCE_DIR}\maperitive\regions\*.svg
+  SetOutPath $INSTDIR\report
+  File ${PROJECT_SOURCE_DIR}\report\*.tex
+
+
+  ;Create uninstaller
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
+
+SectionEnd ; end the section
+
+SectionGroup /e "Externe Tools" GROUP01
+
+Section /o "MiKTeX" SEC02
+AddSize 750000
+
+  InitPluginsDir
+
+  CreateDirectory $INSTDIR\tools
+  NSISdl::download https://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x86/basic-miktex-2.9.7100.exe "$INSTDIR\tools\miktex-portable.exe"
+  Pop $R0 ;Get the return value
+  StrCmp $R0 "success" +2
+    MessageBox MB_OK "Download MiKTeX failed: $R0"
+    Goto +3
+
+  ExecWait '"$INSTDIR\tools\miktex-portable.exe" -o"$INSTDIR\tools\MiKTeX" -y'
+  Delete "$INSTDIR\tools\miktex-portable.exe"
+
+
+SectionEnd ; end the section
+
+Section /o "Maperitive" SEC03
+AddSize 16000
+
+  InitPluginsDir
+
+  CreateDirectory $INSTDIR\tools
+  NSISdl::download http://maperitive.net/download/Maperitive-latest.zip "$INSTDIR\tools\Maperitive-latest.zip"
+  Pop $R0 ;Get the return value
+  StrCmp $R0 "success" +2
+    MessageBox MB_OK "Download Maperitive failed: $R0"
+    Goto +3
+
+  nsisunz::UnzipToLog "$INSTDIR\tools\Maperitive-latest.zip" "$INSTDIR\tools"
+  Delete "$INSTDIR\tools\Maperitive-latest.zip"
+
+SectionEnd ; end the section
+
+Section /o "ImageMagick" SEC04
+AddSize 200000
+
+  InitPluginsDir
+
+  CreateDirectory $INSTDIR\tools
+  NSISdl::download https://imagemagick.org/download/binaries/ImageMagick-7.0.8-58-portable-Q16-x86.zip "$INSTDIR\tools\ImageMagick-portable.zip"
+  Pop $R0 ;Get the return value
+  StrCmp $R0 "success" +2
+    MessageBox MB_OK "Download ImageMagick failed: $R0"
+    Goto +3
+
+  nsisunz::UnzipToLog "$INSTDIR\tools\ImageMagick-portable.zip" "$INSTDIR\tools\ImageMagick"
+  Delete "$INSTDIR\tools\ImageMagick-portable.zip"
+
+SectionEnd ; end the section
+
+Section /o "Sumatra PDF" SEC05
+AddSize 6450
+
+  InitPluginsDir
+
+  CreateDirectory $INSTDIR\tools
+  NSISdl::download https://www.sumatrapdfreader.org/dl/SumatraPDF-3.1.2.zip "$INSTDIR\tools\SumatraPDF.zip"
+  Pop $R0 ;Get the return value
+  StrCmp $R0 "success" +2
+    MessageBox MB_OK "Download Sumatra PDF failed: $R0"
+    Goto +3
+
+  nsisunz::UnzipToLog "$INSTDIR\tools\SumatraPDF.zip" "$INSTDIR\tools\SumatraPDF"
+  Delete "$INSTDIR\tools\SumatraPDF.zip"
+
+
+SectionEnd ; end the section
+
+Section /o "Inkscape" SEC06
+AddSize 6450
+
+  InitPluginsDir
+
+;  CreateDirectory $INSTDIR\tools
+;;  NSISdl::download https://inkscape.org/en/gallery/item/4460/InkscapePortable_0.91.paf.exe "$INSTDIR\tools\InkscapePortable_0.91.paf.exe"
+;;  NSISdl::download https://inkscape.org/en/gallery/item/3932/Inkscape-0.91-1-win32.7z "$INSTDIR\tools\Inkscape-0.91-1-win32.7z"
+;  Pop $R0 ;Get the return value
+;  StrCmp $R0 "success" +2
+;    MessageBox MB_OK "Download Inkscape failed: $R0"
+;    Goto +3
+
+
+
+  Nsis7z::Extract "$INSTDIR\tools\Inkscape-0.91-1-win32.7z"
+;  ExecWait '"$INSTDIR\tools\InkscapePortable_0.91.paf.exe" /S /D="$INSTDIR\tools\Inkscape"'
+;  Delete "$INSTDIR\tools\InkscapePortable_0.91.paf.exe"
+
+
+SectionEnd ; end the section
+
+SectionGroupEnd
+
+
+
+;--------------------------------
+;Descriptions
+
+  ;Language strings
+  LangString DESC_SEC01   ${LANG_GERMAN} "Das Hauptprogramm mit seinen Komponenten."
+  LangString DESC_GROUP01 ${LANG_GERMAN} "Externe Tools die über das Internet runtergeladen und installiert werden."
+  LangString DESC_SEC02   ${LANG_GERMAN} "MiKTeX zur Berichtserstellung."
+  LangString DESC_SEC03   ${LANG_GERMAN} "Maperitive zur Kartenmaterial Erzeugung."
+  LangString DESC_SEC04   ${LANG_GERMAN} "ImageMagick zur Bildmanipulation."
+  LangString DESC_SEC05   ${LANG_GERMAN} "Sumatra PDF zum Betrachten von PDF-Dateien."
+  LangString DESC_SEC06   ${LANG_GERMAN} "Inkscape zum Bearbeiten der Gebietsgrenzen auf der Gebietskarte."
+
+
+  ;Assign language strings to sections
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC01}   $(DESC_SEC01)
+    !insertmacro MUI_DESCRIPTION_TEXT ${GROUP01} $(DESC_GROUP01)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC02}   $(DESC_SEC02)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC03}   $(DESC_SEC03)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC04}   $(DESC_SEC04)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC05}   $(DESC_SEC05)
+    !insertmacro MUI_DESCRIPTION_TEXT ${SEC06}   $(DESC_SEC06)
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+
+
+;--------------------------------
+;Uninstaller Section
+
+Section "Uninstall"
+
+  ;ADD YOUR OWN FILES HERE...
+
+  Delete "$INSTDIR\Uninstall.exe"
+
+  RMDir /r "$INSTDIR"
+
+SectionEnd

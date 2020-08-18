@@ -1,0 +1,41 @@
+\documentclass[10pt,twoside]{article}
+
+\usepackage[margin=1in]{geometry}
+\geometry{a4paper, top=25mm, left=20mm, right=20mm, bottom=30mm, headsep=10mm, footskip=12mm}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{fancyhdr}
+\usepackage{amssymb}
+
+%Show frame
+%\usepackage{showframe}
+
+%Show underfull hbox / vbox
+\showboxbreadth=50 
+\showboxdepth=50
+
+%Show overfull hbox
+%\overfullrule=5mm
+
+\usepackage{supertabular}
+\usepackage{array}
+\newcolumntype{C}[1]{>{\centering}p{#1}}
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\usepackage{colortbl}
+\definecolor{blaua}{cmyk}{0.00,0.00,0.00,0.75}
+\definecolor{blaub}{cmyk}{0.35,0.20,0.00,0.45}
+\definecolor{blauc}{cmyk}{0.35,0.20,0.00,0.34}
+\definecolor{blaud}{cmyk}{0.35,0.10,0.00,0.01}
+\definecolor{blaue}{cmyk}{0.15,0.05,0.00,0.05}
+\definecolor{red}{cmyk}{0.00,0.60,0.60,0.00}
+\definecolor{orange}{cmyk}{0.00,0.30,1.00,0.00}
+\definecolor{yellow}{cmyk}{0.00,0.10,1.00,0.00}
+
+\pagestyle{fancy}
+\begin{document}
+\thispagestyle{plain}
+\input{data}
+\end{document}
