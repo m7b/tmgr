@@ -92,7 +92,7 @@ IF "%pack%" == "OFF" (
 ) ELSE (
     cmake --build . -- package -j %j_option%
 )
-type C:/projects/tmgr/build/wxWidgets-prefix/tmp/wxWidgets-gitclone.cmake
+more C:/projects/tmgr/build/wxWidgets-prefix/tmp/wxWidgets-gitclone.cmake
 
 SET "endTime=%time: =0%"
 IF %ERRORLEVEL% GEQ 1 GOTO ERROR
