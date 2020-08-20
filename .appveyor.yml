@@ -41,12 +41,13 @@ install:
   - move C:\msys64 C:\CPP\tools
   - set PATH=%MINGW_DIR%;%PATH%
   # end prepare for sim local env
-  - mkdir build
-  - cd build
-  - cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
-  - cmake --build .
-  - cd test
-  - ctest
+  - bootstrap.bat
+  #- mkdir build
+  #- cd build
+  #- cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
+  #- cmake --build .
+  #- cd test
+  #- ctest
 
 
 #---------------------------------#
