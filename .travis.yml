@@ -1,0 +1,153 @@
+#https://github.com/ainfosec/ci_helloworld
+
+#
+# Configuration
+#
+language: cpp
+dist: xenial
+
+#
+# Build Dependencies
+#
+before_script:
+- mkdir build
+- cd build
+
+#
+# Build Matrix
+#
+matrix:
+  include:
+
+  #
+  # Build Release
+  #
+  - os: linux
+    env:
+      - TEST="Build Release"
+
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+#          - libboost-all-dev
+#          - libmariadb-client-lgpl-dev
+#          - libmysqlclient-dev
+
+    compiler: gcc
+    
+    script:
+      - cmake -DCI_BUILD:BOOL=ON -DCOVERAGE:BOOL=OFF -DCMAKE_BUILD_TYPE=Release ..
+      - make
+
+  #
+  # Build Debug
+  #
+  - os: linux
+    env:
+      - TEST="Build Debug"
+
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+#          - libboost-all-dev
+#          - libmariadb-client-lgpl-dev
+#          - libmysqlclient-dev
+
+    compiler: gcc
+    
+    script:
+      - cmake -DCI_BUILD:BOOL=ON -DCOVERAGE:BOOL=OFF -DCMAKE_BUILD_TYPE=Debug ..
+      - make
+
+  #
+  # Build Release G++ 8
+  #
+  - os: linux
+    env:
+      - TEST="Build Release G++ 8"
+
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - gcc-8
+          - g++-8
+#          - libboost-all-dev
+#          - libmariadb-client-lgpl-dev
+#          - libmysqlclient-dev
+
+    compiler: gcc
+    
+    script:
+      - export CC=gcc-8
+      - export CXX=g++-8
+      - cmake -DCI_BUILD:BOOL=ON -DCOVERAGE:BOOL=OFF -DCMAKE_BUILD_TYPE=Release ..
+      - make
+
+
+  #
+  # Build Debug G++ 8
+  #
+  - os: linux
+    env:
+      - TEST="Build Debug G++ 8"
+
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+          - gcc-8
+          - g++-8
+#          - libboost-all-dev
+#          - libmariadb-client-lgpl-dev
+#          - libmysqlclient-dev
+
+    compiler: gcc
+    
+    script:
+      - export CC=gcc-8
+      - export CXX=g++-8
+      - cmake -DCI_BUILD:BOOL=ON -DCOVERAGE:BOOL=OFF -DCMAKE_BUILD_TYPE=Debug ..
+      - make
+
+
+  #
+  # Test coverage
+  #
+  - os: linux
+    env:
+      - TEST="Test coverage"
+
+    addons:
+      apt:
+        sources:
+          - ubuntu-toolchain-r-test
+        packages:
+#          - libboost-all-dev
+#          - libmariadb-client-lgpl-dev
+#          - libmysqlclient-dev
+
+    compiler: gcc
+    
+    script:
+      - pip install --user cpp-coveralls
+      - cmake -DCI_BUILD:BOOL=ON -DCOVERAGE:BOOL=ON -DCMAKE_BUILD_TYPE=Debug ..
+      - make
+      - cd test
+      - ctest --verbose
+
+    after_success:
+      - cd ..
+      - cd ..
+      - |
+        coveralls --build-root build --gcov-options '\--long-file-names --preserve-paths' \
+          -E ".*CMakeFiles.*" \
+          -E ".+/config/" \
+          -E ".+/lib/" \
+          -E ".+/test/"
