@@ -84,6 +84,7 @@ GOTO Loop
 SET "startTime=%time: =0%"
 IF NOT EXIST build\NUL MKDIR build
 CD build
+cmake --version
 cmake -G "%generator%" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DCMAKE_VERBOSE_MAKEFILE:BOOL=%verbose% -DCMAKE_BUILD_TYPE=%buildtype% ..
 IF "%pack%" == "OFF" (
     cmake --build . -- -j %j_option%
