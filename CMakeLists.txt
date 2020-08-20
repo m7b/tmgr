@@ -102,7 +102,7 @@ add_executable(
     wxfb/C_wxTerritoryProperties.cpp
     wxfb/C_wxTmgr.cpp
     res/resource.rc
-    res/svn.rc
+#   res/svn.rc
 )
 
 
@@ -134,7 +134,7 @@ SET(SVN_HEADER_H    ${CMAKE_CURRENT_BINARY_DIR}/svn_version.h)
 ADD_CUSTOM_TARGET(
     svnheader
     ALL
-    COMMAND subwcrev ${PROJECT_SOURCE_DIR} ${SVN_HEADER_TMPL} ${SVN_HEADER_H} -q
+    COMMAND cmake -E copy ${SVN_HEADER_TMPL} ${SVN_HEADER_H}
     COMMENT "Write subversion information in header file: ${SVN_HEADER_H}"
 )
 
@@ -172,18 +172,18 @@ ADD_CUSTOM_TARGET(
 SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${TOOLCHAIN_HTML})
 
 
-# generate SVNLog (always)
-FIND_PROGRAM(SVN_EXECUTABLE svn)
-SET(SVNLOG_NEW ${CMAKE_CURRENT_BINARY_DIR}/svnlog_new.txt)
-SET(SVNLOG     ${CMAKE_CURRENT_BINARY_DIR}/svnlog.txt)
-ADD_CUSTOM_TARGET(
-    svnlog
-	ALL
-    COMMAND ${SVN_EXECUTABLE} log ${PROJECT_SOURCE_DIR} -l 20 -r HEAD:1 > ${SVNLOG_NEW}
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SVNLOG_NEW} ${SVNLOG}
-    COMMENT "Create SVN-log file"
-)
-SET_PROPERTY(SOURCE res/svn.rc APPEND PROPERTY OBJECT_DEPENDS ${SVNLOG})
+# # generate SVNLog (always)
+# FIND_PROGRAM(SVN_EXECUTABLE svn)
+# SET(SVNLOG_NEW ${CMAKE_CURRENT_BINARY_DIR}/svnlog_new.txt)
+# SET(SVNLOG     ${CMAKE_CURRENT_BINARY_DIR}/svnlog.txt)
+# ADD_CUSTOM_TARGET(
+    # svnlog
+	# ALL
+    # COMMAND ${SVN_EXECUTABLE} log ${PROJECT_SOURCE_DIR} -l 20 -r HEAD:1 > ${SVNLOG_NEW}
+    # COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SVNLOG_NEW} ${SVNLOG}
+    # COMMENT "Create SVN-log file"
+# )
+# SET_PROPERTY(SOURCE res/svn.rc APPEND PROPERTY OBJECT_DEPENDS ${SVNLOG})
 
 
 
