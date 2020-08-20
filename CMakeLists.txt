@@ -22,7 +22,7 @@ ExternalProject_Add(
   wxWidgets
   GIT_REPOSITORY         https://github.com/wxWidgets/wxWidgets.git
   GIT_TAG                v3.1.4
-  GIT_SUBMODULES_RECURSE TRUE
+# GIT_SUBMODULES_RECURSE TRUE
   GIT_SHALLOW            TRUE
   GIT_PROGRESS           FALSE
   CMAKE_ARGS             -DwxBUILD_SHARED=NO -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
