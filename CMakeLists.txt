@@ -20,8 +20,8 @@ INCLUDE(ExternalProject)
 # Includ external project wxWidgets
 ExternalProject_Add(
   wxWidgets
-  GIT_REPOSITORY         https://github.com/wxWidgets/wxWidgets.git
-  GIT_TAG                v3.1.4
+  GIT_REPOSITORY         "https://github.com/wxWidgets/wxWidgets.git"
+  GIT_TAG                "v3.1.4"
   GIT_SUBMODULES_RECURSE TRUE
   GIT_SHALLOW            TRUE
   GIT_PROGRESS           FALSE
